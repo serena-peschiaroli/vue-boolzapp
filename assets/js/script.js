@@ -169,6 +169,7 @@ createApp ({
                     ],
                 },
             ],
+            newMessageText: '',
             
         };
     },
@@ -197,6 +198,35 @@ createApp ({
         },
         showConversation(contact) {
             this.activeContact = contact;
+        },
+        getCombinedMessages(){
+            //controlla se c'è un contatto attivo, altrimento ritorna un arrai vuoto per evitare errori
+            if (!this.activeContact) return [];
+            //crea una copia array di messages del contatti attivo
+            const allMessages = [...this.activeContact.messages];
+            //ritorna un array di msg ordinati secondo proprietà date
+            return allMessages.sort((a,b) => new Date(a.date) - new Date(b.date));
+        },
+        sendMessage(text){
+            const newMessage = {
+                date: new Date().toLocaleString(),
+                message: text,
+                status: 'sent',
+            };
+            this.activeContact.messages.push(newMessage);
+
+            // pulisci input
+            this.newMessageText = '';
+
+            // per simulare una risposta dopo 1 sec
+            setTimeout(() => {
+                const responseMsg= {
+                    date: new Date().toLocaleString(),
+                    message: 'Okay',
+                    status: 'received',
+                };
+                this.activeContact.messages.push(responseMsg);
+            }, 1000);
         },
         
 
