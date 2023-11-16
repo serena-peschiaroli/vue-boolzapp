@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <!-- Metadati del documento -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Collegamento ai fogli di stile -->
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/tablet.css" media="screen and (max-width: 991px)">
+    <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 540px)">
+    <!-- Collegamento a Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+     <!-- Titolo della pagina -->
+    <title>Boolzapp</title>
+</head>
+<body>
+    <!-- Contenitore principale dell'app -->
+    <div id="app" class="container">
+        <!-- contenitore sx -->
+        <div class="left">
+            <!-- Header sinistro -->
+            <div class="header-left">
+                 <!-- Logo del profilo e icone -->
+                <div class="header-left-logo">
+                    <img src="assets/img/avatar_io.jpg" alt="Mio avatar">
+                </div>
+                <div class="header-left-icons">
+                    <i class="fas fa-circle-notch"></i>
+                    <i class="fas fa-comment-alt"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+            <!-- Disclaimer sinistro -->
+            <div class="left-disclaimer">
+                <div class="left-disclaimer-logo">
+                    <i class="fa fa-bell-slash" aria-hidden="true"></i>
+                </div>
+                <!-- Icona disclaimer e testo -->
+                <div class="left-disclaimer-text">
+                    <h3>Ricevi notifiche di nuovi messaggi</h3>
+                    <a href="#">Attiva notifiche desktop</a>
+                </div>
+            </div>
+             <!-- Barra di ricerca sinistra -->
+            <div class="left-searchbar">
+                <label class="search-label" for="search">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </label>
+                <input id="contacts-filter" class="left-searchbar-input" placeholder="Cerca o inizia una nuova chat"
+                    name="search">
+            </div>
+            <!-- Lista dei contatti -->
+            <div class="contacts">
+                <!-- Singolo contatto -->
+                <div class="contact" v-for ="contact in contacts" :key="contact.name" @click="showConversation(contact)">
+                    <!-- avatar del contatto -->
+                    <div class="contact-logo">
+                        <img :src="'assets/img/avatar' + contact.avatar + '.jpg'" :alt="'Avatar' +  contact.name">
+                    </div>
+                    <!-- Nome del contatto e orario dell'ultimo messaggio -->
+                    <div class="contact-info">
+                        <h3>
+                            <span class="contact-name">{{ contact.name }}</span>
+                            <span class="time">{{ getLastReceivedMessageTime(contact) }}</span>
+                        </h3>
+                        <!-- Anteprima del messaggio -->
+                        <small>{{  getLastReceivedMessageText(contact) }}</small>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- /contenitore sx -->
+        <!-- contenitore dx -->
+        <div class="right">
+            <!-- Header destro -->
+            <div class="header-right">
+                <!-- Logo del contatto attuale e icone -->
+                <div class="header-right-logo">
+                    <img src="assets/img/avatar_1.jpg" alt="">
+                    <h3><span id="header-right-contact-name">Michele</span> <br>
+                        <small class="time">Ultimo accesso oggi alle 16:26</small>
+                    </h3>
+                </div>
+                <div class="header-right-icons">
+                    <i class="fas fa-search"></i>
+                    <i class="fas fa-paperclip"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+            <!-- Contenitore dei messaggi -->
+            <div class="right-messages-container">
+                <div class="right-messages">
+                     <!-- Messaggio inviato -->
+                     <!-- v for per iterare ogni .messaggio in activeContact.messages -->
+                     <!-- :class appleica differenti classi basandosi sulle condizioni, se message = true aggiunge la classe message, sent: message.status===sent aggiunge la classe sent se il messaggio.status è sent; received:message.status===received aggiunge classe received se status:received -->
+
+                    <div class="message sent" v-for="message in activeContact ? activeContact.messages.filter(msg => msg.status === 'sent').sort((a, b) => new Date(a.date) - new Date(b.date)) : []" :key="message.date" >
+                        <div class="message-inner">
+                            <!-- Testo del messaggio e opzioni -->
+                            <span class="message-text">
+                                {{ message.message}}
+                            </span>
+                            <!-- Opzioni del messaggio -->
+                            <div class="message-options">
+                                <i class="fa fa-chevron-down"></i>
+                                <div class="message-options-panel">
+                                    <div class="message-info">Info messaggio</div>
+                                    <div class="message-destroy">Cancella messaggio</div>
+                                </div>
+                            </div>
+                        </div>
+                         <!-- Orario del messaggio -->
+                        <span class="message-time">{{ message.date}}</span>
+                    </div>
+                    <!-- messaggio ricevuto -->
+                    <div class="message received" v-for="message in activeContact ? activeContact.messages.filter(msg => msg.status === 'received').sort((a, b) => new Date(a.date) - new Date(b.date)) : []" :key="message.date">
+                        <div class="message-inner">
+                            <span class="message-text">
+                                {{ message.message }}
+                            </span>
+                            <div class="message-options">
+                                <i class="fa fa-chevron-down"></i>
+                                <div class="message-options-panel">
+                                    <div class="message-info">Info messaggio</div>
+                                    <div class="message-destroy">Cancella messaggio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="message-time">{{ message.date }}</span>
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- Footer destro (input del nuovo messaggio) -->
+            <div class="right-footer">
+                <!-- Icona smiley -->
+                <div class="right-footer-icon">
+                    <i class="far fa-smile"></i>
+                </div>
+                <!-- Input del nuovo messaggio -->
+                <input class="new-message-inputs" placeholder="Scrivi un messaggio">
+                 <!-- Icona del microfono -->
+                <div class="right-footer-icon">
+                    <i class="fa fa-microphone" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+        <!-- /contenitore dx -->
+    </div>
+     <!-- Collegamento a Luxon (libreria per la gestione delle date e degli orari) -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
