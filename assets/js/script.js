@@ -208,25 +208,43 @@ createApp ({
             return allMessages.sort((a,b) => new Date(a.date) - new Date(b.date));
         },
         sendMessage(text){
-            const newMessage = {
-                date: new Date().toLocaleString(),
-                message: text,
-                status: 'sent',
-            };
-            this.activeContact.messages.push(newMessage);
 
-            // pulisci input
-            this.newMessageText = '';
+            const trimmedMsg = text.trim();
 
-            // per simulare una risposta dopo 1 sec
-            setTimeout(() => {
-                const responseMsg= {
+            // controllare se il messaggio è uovot
+           if (trimmedMsg !== "") {
+                const newMessage = {
                     date: new Date().toLocaleString(),
-                    message: 'Okay',
-                    status: 'received',
+                    message: text,
+                    status: 'sent',
                 };
-                this.activeContact.messages.push(responseMsg);
-            }, 1000);
+                // aggiungere nuovo msg
+                this.activeContact.messages.push(newMessage);
+              // pulire input
+                this.newMessageText = ""
+                console.log("Messaggio inviato");
+                setTimeout(() => {
+                    const responseMsg = {
+                        date: new Date().toLocaleString(),
+                        message: 'Okay!',
+                        status: 'received',
+                    }; 
+                    this.activeContact.messages.push(responseMsg);
+
+                }, 1000);
+            }else{
+                // simulare una risposta per un msg vuoto
+                setTimeout(() => {
+                    const responseMsg = {
+                        date: new Date().toLocaleString(),
+                        message: 'Perché mi mandi un messaggio vuoto??',
+                        status: 'received',
+                    };
+                    this.activeContact.messages.push(responseMsg);
+                }, 1000);
+            }
+           
+            
         },
         
 
