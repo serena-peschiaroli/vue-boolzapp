@@ -77,10 +77,11 @@
         <div class="right">
             <!-- Header destro -->
             <div class="header-right">
-                <!-- Logo del contatto attuale e icone -->
-                <div class="header-right-logo">
-                    <img src="assets/img/avatar_1.jpg" alt="">
-                    <h3><span id="header-right-contact-name">Michele</span> <br>
+                <!-- Logo del contatto attuale e icone, se non è cliccato nessun contatto viene nascosto avatar, nome e ultimo accesso-->
+                <div class="header-right-logo" :class="{ 'hidden': !activeContact }">
+                    <img v-if="activeContact" :src="'assets/img/avatar' + (activeContact ? activeContact.avatar : '') + '.jpg'" alt="">
+                    <h3 v-if="activeContact"><span id="header-right-contact-name">{{ activeContact ? activeContact.name : '' }}</span> <br>
+                        <!-- DA SISTEMARE ULTIMO ACCESSO!!! -->
                         <small class="time">Ultimo accesso oggi alle 16:26</small>
                     </h3>
                 </div>
