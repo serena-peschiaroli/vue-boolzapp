@@ -175,6 +175,17 @@ createApp ({
             
         };
     },
+    computed: {
+        // Calcolo dei contatti filtrati in base al testo di ricerca che tanto non funziona
+        filteredContacts() {
+            console.log('Testo di Ricerca', this.searchText);
+            const filtered = this.contacts.filter(contact =>
+                contact.name.toLowerCase().includes(this.searchText.toLowerCase())
+            );
+            console.log('contratti filtrati:', filtered);
+            return filtered;
+        },
+    },
     methods: {
         getLastReceivedMessageText(contact) {
             //funione che usa gestLastReceivedMessage come helper, richiamala funzione per prendere l'ultimo msg con status 'received' passando contact come argomento;
@@ -258,13 +269,44 @@ createApp ({
            
             
         },
-        searchContacts(){
-            console.log('searchContact iniziato');
+        searchContacts() {
+            // Funzione per la ricerca dei contatti in base al testo inserito
+            console.log('Search Contact iniziato');
             console.log('Search Text:', this.searchText);
             console.log('Contacts:', this.contacts);
-            return this.contacts.filter(contact =>
+        
+            if (!this.searchText) {
+                // se search empty ritorna tutti i cntatti
+                return this.contacts;
+            }
+        //filtra i contatti in base al nome ignorando maiusole/minuscole
+            const filteredContacts = this.contacts.filter(contact =>
                 contact.name.toLowerCase().includes(this.searchText.toLowerCase())
             );
+        
+            console.log('Filtered Contacts:', filteredContacts);
+            // Restituisci l'array dei contatti filtrati
+            return filteredContacts;
+        },
+        // Funzione per eliminare un messaggio dalla conversazione attiva
+        deleteMessage(message) {
+            // Trova l'indice del messaggio nella lista dei messaggi attivi
+            const index = this.activeContact.messages.indexOf(message);
+            // Se l'indice è valido, rimuovi il messaggio dalla lista
+            if (index !== -1) {
+                this.activeContact.messages.splice(index, 1);
+            }
+        },
+        
+        showMessageInfo() {
+            // Funzione per mostrare le informazioni del messaggio più recente della conversazione attiva
+            if (this.activeContact) {
+                // Ottiengo l'ultimo messaggio ricevuto
+                const lastReceivedMessage = this.getLastReceivedMessage(this.activeContact);
+                //crezione del msg informativo con data e testo ultimo msg ricevuto
+                const infoMessage = `Last received message: ${lastReceivedMessage ? lastReceivedMessage.message : 'No messages'}\nDate: ${this.getLastReceivedMessageTime(this.activeContact)}`;
+                alert(infoMessage); 
+            }
         },
         
 

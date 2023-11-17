@@ -73,19 +73,19 @@
                             <small>{{  getLastReceivedMessageText(contact) }}</small>
                         </div>
                         <div v-else>
-                            <div class="contact" v-for="(contact, index) in filteredContacts" :key="contact.name" @click="showConversation(contact)">
+                            <div class="contact" v-if="filteredContacts.length === 1" :key="filteredContacts.name" @click="showConversation(filteredContacts)">
                                 <!-- avatar del contatto -->
                                 <div class="contact-logo">
-                                    <img :src="`assets/img/avatar${contact.avatar}.jpg`" :alt="`Avatar di ${contact.name}`">
+                                    <img :src="`assets/img/avatar${filteredContacts.avatar}.jpg`" :alt="`Avatar di ${filteredContacts.name}`">
                                 </div>
                                 <!-- Nome del contatto e orario dell'ultimo messaggio -->
                                 <div class="contact-info">
                                     <h3>
-                                        <span class="contact-name">{{ contact.name }}</span>
-                                        <span class="time">{{ getLastReceivedMessageTime(contact) }}</span>
+                                        <span class="contact-name">{{ filteredContacts.name }}</span>
+                                        <span class="time">{{ getLastReceivedMessageTime(filteredContacts) }}</span>
                                     </h3>
                                     <!-- Anteprima del messaggio -->
-                                    <small>{{  getLastReceivedMessageText(contact) }}</small>
+                                    <small>{{  getLastReceivedMessageText(filteredContacts) }}</small>
                                 </div>
                             </div>
                         </div>
@@ -129,8 +129,8 @@
                             <div class="message-options">
                                 <i class="fa fa-chevron-down"></i>
                                 <div class="message-options-panel">
-                                    <div class="message-info">Info messaggio</div>
-                                    <div class="message-destroy">Cancella messaggio</div>
+                                    <div class="message-info" @click="showMessageInfo">Info messaggio</div>
+                                    <div class="message-destroy" @click="deleteMessage(message)">Cancella messaggio</div>
                                 </div>
                             </div>
                         </div>
