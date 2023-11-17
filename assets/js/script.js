@@ -6,6 +6,8 @@ createApp ({
     data(){
         return{
             activeContact : null,
+            searchText: '',
+            filteredContacts: [],
             contacts: [
                 {
                     name: 'Michele',
@@ -255,6 +257,14 @@ createApp ({
             }
            
             
+        },
+        searchContacts(){
+            console.log('searchContact iniziato');
+            console.log('Search Text:', this.searchText);
+            console.log('Contacts:', this.contacts);
+            return this.contacts.filter(contact =>
+                contact.name.toLowerCase().includes(this.searchText.toLowerCase())
+            );
         },
         
 
