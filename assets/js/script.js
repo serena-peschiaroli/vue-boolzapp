@@ -233,6 +233,16 @@ createApp ({
 
                 }, 1000);
             }else{
+                const newMessage = {
+                    date: new Date().toLocaleString(),
+                    message: text,
+                    status: 'sent',
+                };
+                // aggiungere nuovo msg
+                this.activeContact.messages.push(newMessage);
+              // pulire input
+                this.newMessageText = ""
+                
                 // simulare una risposta per un msg vuoto
                 setTimeout(() => {
                     const responseMsg = {
