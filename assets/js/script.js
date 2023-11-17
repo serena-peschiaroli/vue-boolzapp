@@ -199,6 +199,7 @@ createApp ({
         getLastReceivedMessage(contact){
             // funzione "helper method" .> per poter recuperare il messaggio e l'orario 
             const receivedMessages = contact.messages.filter(message => message.status === 'received');
+            console.log('ultimo msg ricevuto:', receivedMessages.length > 0 ? receivedMessages[receivedMessages.length - 1].date : '');
             //prende l'obj contact come argomento e ritortna l'ultimo msg per quel contatto; filtra i messaggio per includere SOLO quelli con status 'received
             return receivedMessages.length > 0 ? receivedMessages[receivedMessages.length - 1] : null;
             //ritorna l'ultimo messaggio con status 'received' (length-1);

@@ -75,19 +75,19 @@
                         </div>
                         <div v-else>
                             <!-- contatti quando searchbar attiva-->
-                            <div class="contact" v-if="filteredContacts.length === 1" :key="filteredContacts.name" @click="showConversation(filteredContacts)">
+                            <div class="contact" v-for="filteredContact in filteredContacts" :key="filteredContact.name" @click="showConversation(filteredContact)">
                                 <!-- avatar del contatto -->
                                 <div class="contact-logo">
-                                    <img :src="`assets/img/avatar${filteredContacts.avatar}.jpg`" :alt="`Avatar di ${filteredContacts.name}`">
+                                    <img :src="`assets/img/avatar${filteredContact.avatar}.jpg`" :alt="`Avatar di ${filteredContact.name}`">
                                 </div>
                                 <!-- Nome del contatto e orario dell'ultimo messaggio -->
                                 <div class="contact-info">
                                     <h3>
-                                        <span class="contact-name">{{ filteredContacts.name }}</span>
-                                        <span class="time">{{ getLastReceivedMessageTime(filteredContacts) }}</span>
+                                        <span class="contact-name">{{ filteredContact.name }}</span>
+                                        <span class="time">{{ getLastReceivedMessageTime(filteredContact) }}</span>
                                     </h3>
                                     <!-- Anteprima del messaggio -->
-                                    <small>{{  getLastReceivedMessageText(filteredContacts) }}</small>
+                                    <small>{{  getLastReceivedMessageText(filteredContact) }}</small>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                 <div class="header-right-logo" :class="{ 'hidden': !activeContact }">
                     <img v-if="activeContact" :src="'assets/img/avatar' + (activeContact ? activeContact.avatar : '') + '.jpg'" alt="">
                     <h3 v-if="activeContact"><span id="header-right-contact-name">{{ activeContact ? activeContact.name : '' }}</span> <br>
-                        <!-- DA SISTEMARE ULTIMO ACCESSO!!! -->
+                        
                         <small class="time">{{ getLastReceivedMessageTime(activeContact) }}</small>
                     </h3>
                 </div>
