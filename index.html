@@ -48,6 +48,7 @@
                 <label class="search-label" for="search">
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </label>
+                <!-- Input di ricerca con binding a searchtext e gestione tramite searchContacts -->
                 <input id="contacts-filter" class="left-searchbar-input" placeholder="Cerca o inizia una nuova chat"
                     name="search" v-model="searchText" @input="searchContacts">
 
@@ -56,7 +57,7 @@
             
             <!-- Lista dei contatti -->
             <div class="contacts">
-                <!-- Singolo contatto -->
+                <!-- Singolo contatto quando ricerca vuota-->
                 <div v-if="!searchText">
                     <div class="contact" v-for ="(contact, index) in contacts" :key="contact.name" @click="showConversation(contact)">
                         <!-- avatar del contatto -->
@@ -73,6 +74,7 @@
                             <small>{{  getLastReceivedMessageText(contact) }}</small>
                         </div>
                         <div v-else>
+                            <!-- contatti quando searchbar attiva-->
                             <div class="contact" v-if="filteredContacts.length === 1" :key="filteredContacts.name" @click="showConversation(filteredContacts)">
                                 <!-- avatar del contatto -->
                                 <div class="contact-logo">
@@ -104,7 +106,7 @@
                     <img v-if="activeContact" :src="'assets/img/avatar' + (activeContact ? activeContact.avatar : '') + '.jpg'" alt="">
                     <h3 v-if="activeContact"><span id="header-right-contact-name">{{ activeContact ? activeContact.name : '' }}</span> <br>
                         <!-- DA SISTEMARE ULTIMO ACCESSO!!! -->
-                        <small class="time">Ultimo accesso oggi alle 16:26</small>
+                        <small class="time">{{ getLastReceivedMessageTime(activeContact) }}</small>
                     </h3>
                 </div>
                 <div class="header-right-icons">
