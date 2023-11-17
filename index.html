@@ -54,10 +54,10 @@
             <!-- Lista dei contatti -->
             <div class="contacts">
                 <!-- Singolo contatto -->
-                <div class="contact" v-for ="contact in contacts" :key="contact.name" @click="showConversation(contact)">
+                <div class="contact" v-for ="(contact, index) in contacts" :key="contact.name" @click="showConversation(contact)">
                     <!-- avatar del contatto -->
                     <div class="contact-logo">
-                        <img :src="'assets/img/avatar' + contact.avatar + '.jpg'" :alt="'Avatar' +  contact.name">
+                    <img :src="`assets/img/avatar${contact.avatar}.jpg`" :alt="`Avatar di ${contact.name}`">
                     </div>
                     <!-- Nome del contatto e orario dell'ultimo messaggio -->
                     <div class="contact-info">
