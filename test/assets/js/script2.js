@@ -235,9 +235,7 @@ L'indice attivo viene utilizzato per determinare quale conversazione è attualme
                 if (this.activeIndex !== null && this.activeIndex < this.contacts.length) {
                     
                     this.contacts[this.activeIndex].messages.push(newMessage);
-                    this.newMessageText = ""; // Clear the input
-        
-                    // Simulate a response after a delay
+                    this.newMessageText = ""; 
                     setTimeout(() => {
                         const responseMsg = {
                             date: new Date().toLocaleString(),
