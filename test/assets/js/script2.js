@@ -2,10 +2,10 @@ const { createApp } = Vue;
 const dt = luxon.DateTime;
 console.log(dt.now().setLocale('it').toLocaleString(dt.DATETIME_FULL_WITH_SECONDS));
 
-createApp ({
-    data(){
-        return{
-            activeContact : null,
+createApp({
+    data() {
+        return {
+            activeIndex: 0, 
             searchText: "",
             filteredContacts: [],
             contacts: [
@@ -172,13 +172,11 @@ createApp ({
                 },
             ],
             newMessageText: '',
-            
         };
     },
     computed: {
-        // Calcolo dei contatti filtrati in base al testo di ricerca che tanto non funziona
-         // Lista dei contatti filtrati in base al testo di ricerca
-         filteredContactsList() {
+        // Lista dei contatti filtrati in base al testo di ricerca
+        filteredContactsList() {
             //Filtra i messaggi del contatto cercando quelli con lo status "received".
             const filtered = this.contacts.filter(contact =>
                 contact.name.toLowerCase().includes(this.searchText.toLowerCase())
@@ -187,134 +185,105 @@ createApp ({
         },
     },
     methods: {
-        getLastReceivedMessageText(contact) {
-            //funione che usa gestLastReceivedMessage come helper, richiamala funzione per prendere l'ultimo msg con status 'received' passando contact come argomento;
+        getLastReceivedMessage(contact) {
+            // Ottiene l'ultimo messaggio ricevuto per il contatto specificato
+            //Utilizza il metodo getLastReceivedMessage per ottenere l'oggetto dell'ultimo messaggio 
             
-            const lastReceivedMessage = this.getLastReceivedMessage(contact);
-            //this.getLastReceivedMessage viene inserita nella variabile getLastReceivedMessage, che continene l'oggetto relativo
-            // operatore ternario che controlla se lastrecevedmessage non sia né null né undefined e ritorna lastreceivedmsg
-            console.log(lastReceivedMessage);
-            return lastReceivedMessage ? lastReceivedMessage.message : '';
-        },
-        getLastReceivedMessage(contact){
-            // funzione "helper method" .> per poter recuperare il messaggio e l'orario 
             const receivedMessages = contact.messages.filter(message => message.status === 'received');
-            console.log('ultimo msg ricevuto:', receivedMessages.length > 0 ? receivedMessages[receivedMessages.length - 1].date : '');
-            //prende l'obj contact come argomento e ritortna l'ultimo msg per quel contatto; filtra i messaggio per includere SOLO quelli con status 'received
+            
             return receivedMessages.length > 0 ? receivedMessages[receivedMessages.length - 1] : null;
-            //ritorna l'ultimo messaggio con status 'received' (length-1);
-
         },
-        getLastReceivedMessageTime(contact){
+        
+        getLastReceivedMessageTime(contact) {
             const lastReceivedMessage = this.getLastReceivedMessage(contact);
             return lastReceivedMessage ? lastReceivedMessage.date : '';
-            console.log(lastReceivedMessage.date);
         },
+        
+        getLastReceivedMessageText(contact) {
+            const lastReceivedMessage = this.getLastReceivedMessage(contact);
+            return lastReceivedMessage ? lastReceivedMessage.message : '';
+        },
+        
         showConversation(contact) {
-            this.activeContact = contact;
-        },
-        getCombinedMessages(){
-            //controlla se c'è un contatto attivo, altrimento ritorna un arrai vuoto per evitare errori
-            if (!this.activeContact) return [];
-            //crea una copia array di messages del contatti attivo
-            const allMessages = [...this.activeContact.messages];
-            //ritorna un array di msg ordinati secondo proprietà date
-            return allMessages.sort((a,b) => new Date(a.date) - new Date(b.date));
-        },
-        sendMessage(text){
 
+            /*'indice attivo per visualizzare la conversazione con un contatto specificato.
+L'indice attivo viene utilizzato per determinare quale conversazione è attualmente aperta.*/
+            this.activeIndex = this.contacts.indexOf(contact);
+        },
+    
+        
+       
+
+        getCombinedMessages() {
+            if (this.activeIndex === null || this.activeIndex >= this.contacts.length) return [];
+            const allMessages = [...this.contacts[this.activeIndex].messages];
+            return allMessages.sort((a, b) => new Date(a.date) - new Date(b.date));
+        },
+        
+
+        sendMessage(text) {
             const trimmedMsg = text.trim();
-
-            // controllare se il messaggio è uovot
-           if (trimmedMsg !== "") {
-                const newMessage = {
-                    date: new Date().toLocaleString(),
-                    message: text,
-                    status: 'sent',
-                };
-                // aggiungere nuovo msg
-                this.activeContact.messages.push(newMessage);
-              // pulire input
-                this.newMessageText = ""
-                console.log("Messaggio inviato");
-                setTimeout(() => {
-                    const responseMsg = {
-                        date: new Date().toLocaleString(),
-                        message: 'Okay!',
-                        status: 'received',
-                    }; 
-                    this.activeContact.messages.push(responseMsg);
-
-                }, 1000);
-            }else{
-                const newMessage = {
-                    date: new Date().toLocaleString(),
-                    message: text,
-                    status: 'sent',
-                };
-                // aggiungere nuovo msg
-                this.activeContact.messages.push(newMessage);
-              // pulire input
-                this.newMessageText = ""
-                
-                // simulare una risposta per un msg vuoto
-                setTimeout(() => {
-                    const responseMsg = {
-                        date: new Date().toLocaleString(),
-                        message: 'Perché mi mandi un messaggio vuoto??',
-                        status: 'received',
-                    };
-                    this.activeContact.messages.push(responseMsg);
-                }, 1000);
-            }
-           
+        
             
+            if (trimmedMsg !== "") {
+                const newMessage = {
+                    date: new Date().toLocaleString(),
+                    message: text,
+                    status: 'sent',
+                };
+        
+                if (this.activeIndex !== null && this.activeIndex < this.contacts.length) {
+                    
+                    this.contacts[this.activeIndex].messages.push(newMessage);
+                    this.newMessageText = ""; // Clear the input
+        
+                    // Simulate a response after a delay
+                    setTimeout(() => {
+                        const responseMsg = {
+                            date: new Date().toLocaleString(),
+                            message: 'Okay!',
+                            status: 'received',
+                        };
+                        this.contacts[this.activeIndex].messages.push(responseMsg);
+                    }, 1000);
+                } else {
+                    console.error('indice invalido', this.activeIndex);
+                }
+            }
+        },
+        
+
+        deleteMessage(message) {
+            const index = this.contacts[this.activeIndex].messages.indexOf(message);
+            if (index !== -1) {
+                this.contacts[this.activeIndex].messages.splice(index, 1);
+            }
+        },
+
+        showMessageInfo() {
+            if (this.activeIndex !== null && this.activeIndex < this.contacts.length) {
+                const lastReceivedMessage = this.getLastReceivedMessage(this.contacts[this.activeIndex]);
+                const infoMessage = `Ultimo messaggio ricevuto: ${lastReceivedMessage ? lastReceivedMessage.message : 'No messages'}\nDate: ${this.getLastReceivedMessageTime(this.contacts[this.activeIndex])}`;
+                alert(infoMessage);
+            }
         },
         searchContacts() {
-            // Funzione per la ricerca dei contatti in base al testo inserito
             console.log('Search Contact iniziato');
             console.log('Search Text:', this.searchText);
             console.log('Contacts:', this.contacts);
         
             if (!this.searchText) {
-                // se search empty ritorna tutti i cntatti
-                return this.contacts;
+                this.filteredContacts = this.contacts;
+            } else {
+                this.filteredContacts = this.contacts.filter(contact =>
+                    contact.name.toLowerCase().includes(this.searchText.toLowerCase())
+                );
             }
-            //filtra i contatti in base al nome ignorando maiusole/minuscole
-            const filteredContacts = this.contacts.filter(contact =>
-                contact.name.toLowerCase().includes(this.searchText.toLowerCase())
-            );
         
-            console.log('Filtered Contacts:', filteredContacts);
-            // Restituisci l'array dei contatti filtrati
-            return filteredContacts;
-        },
-        // Funzione per eliminare un messaggio dalla conversazione attiva
-        deleteMessage(message) {
-            // Trova l'indice del messaggio nella lista dei messaggi attivi
-            const index = this.activeContact.messages.indexOf(message);
-            // Se l'indice è valido, rimuovi il messaggio dalla lista
-            if (index !== -1) {
-                this.activeContact.messages.splice(index, 1);
-            }
+            console.log('filtrati:', this.filteredContacts);
         },
         
-        showMessageInfo() {
-            // Funzione per mostrare le informazioni del messaggio più recente della conversazione attiva
-            if (this.activeContact) {
-                // Ottiengo l'ultimo messaggio ricevuto
-                const lastReceivedMessage = this.getLastReceivedMessage(this.activeContact);
-                //crezione del msg informativo con data e testo ultimo msg ricevuto
-                const infoMessage = `Last received message: ${lastReceivedMessage ? lastReceivedMessage.message : 'No messages'}\nDate: ${this.getLastReceivedMessageTime(this.activeContact)}`;
-                alert(infoMessage); 
-            }
-        },
         
-
+        
     },
-    
 }).mount("#app");
-
-
-
-
