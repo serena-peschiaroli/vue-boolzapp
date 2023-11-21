@@ -258,10 +258,9 @@ L'indice attivo viene utilizzato per determinare quale conversazione è attualme
             }
         },
 
-        showMessageInfo() {
+        showMessageInfo(message) {
             if (this.activeIndex !== null && this.activeIndex < this.contacts.length) {
-                const lastReceivedMessage = this.getLastReceivedMessage(this.contacts[this.activeIndex]);
-                const infoMessage = `Ultimo messaggio ricevuto: ${lastReceivedMessage ? lastReceivedMessage.message : 'No messages'}\nDate: ${this.getLastReceivedMessageTime(this.contacts[this.activeIndex])}`;
+                const infoMessage = `Messaggio: ${message ? message.message : 'No message'}\nDate: ${message ? message.date : ''}`;
                 alert(infoMessage);
             }
         },
